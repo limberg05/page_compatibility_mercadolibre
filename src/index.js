@@ -1,12 +1,16 @@
+import reportWebVitals from './reportWebVitals';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
 import { NextUIProvider } from '@nextui-org/react';
+import { Title, MainTable } from './sections';
+import './index.css';
 
-ReactDOM.render(
+const root = ReactDOM.createRoot(document.getElementById('main'));
+root.render(
   <NextUIProvider>
-    <App />
-  </NextUIProvider>,
-  document.getElementById('root')
+    <Title />
+    <MainTable />
+  </NextUIProvider>
 );
+
+reportWebVitals();
