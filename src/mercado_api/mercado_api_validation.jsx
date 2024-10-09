@@ -13,9 +13,9 @@ const OAuth2Component = () => {
   const [accessToken, setAccessToken] = useState(null);
 
   // Variables de configuración para la autenticación en Mercado Libre
-  const clientId = '1797023417364319'; // Reemplaza con tu Client ID
-  const clientSecret = 'kxPPpPWmY1xGzyjfyPirhd0tv3MigXD0'; // Reemplaza con tu Client Secret
-  const redirectUri = 'https://www.pcfacil.shop/'; // La URI que registraste en tu app de Mercado Libre
+  const clientId = process.env.REACT_APP_CLIENT_ID; // Reemplaza con tu Client ID
+  const clientSecret = process.env.REACT_APP_CLIENT_SECRET; // Reemplaza con tu Client Secret
+  const redirectUri = process.env.REACT_APP_REDIRECT_URI; // La URI que registraste en tu app de Mercado Libre
 
   // Función para redirigir al usuario a la página de autenticación de Mercado Libre
   const authorize = () => {
