@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 
 // Generar un 'state' aleatorio para evitar ataques CSRF
 const generateState = () => {
@@ -8,14 +8,14 @@ const generateState = () => {
   );
 };
 
+// Variables de configuración fuera del componente para evitar recrearlas en cada renderización
+const clientId = process.env.REACT_APP_CLIENT_ID; // Reemplaza con tu Client ID
+const clientSecret = process.env.REACT_APP_CLIENT_SECRET; // Reemplaza con tu Client Secret
+const redirectUri = process.env.REACT_APP_REDIRECT_URI; // La URI que registraste en tu app de Mercado Libre
+
 const OAuth2Component = () => {
   // Definir un estado para almacenar el 'access token'
   const [accessToken, setAccessToken] = useState(null);
-
-  // Variables de configuración para la autenticación en Mercado Libre
-  const clientId = process.env.REACT_APP_CLIENT_ID; // Reemplaza con tu Client ID
-  const clientSecret = process.env.REACT_APP_CLIENT_SECRET; // Reemplaza con tu Client Secret
-  const redirectUri = process.env.REACT_APP_REDIRECT_URI; // La URI que registraste en tu app de Mercado Libre
 
   // Función para redirigir al usuario a la página de autenticación de Mercado Libre
   const authorize = () => {
@@ -29,8 +29,8 @@ const OAuth2Component = () => {
     window.location.href = authUrl;
   };
 
-  // Función para intercambiar el 'authorization code' por el 'access token'
-  const exchangeCodeForToken = async (authorizationCode) => {
+  // Función para intercambiar el 'authorization code' por el 'access token' (memorizada con useCallback)
+  const exchangeCodeForToken = useCallback(async (authorizationCode) => {
     // Realizamos una solicitud POST a la API de Mercado Libre para obtener el access token
     const response = await fetch('https://api.mercadolibre.com/oauth/token', {
       method: 'POST',
@@ -52,7 +52,7 @@ const OAuth2Component = () => {
     console.log('Access Token:', data.access_token); // Imprimir el token en la consola
     setAccessToken(data.access_token); // Guardar el access token en el estado de React
     localStorage.setItem('accessToken', data.access_token); // Almacenarlo en localStorage para futuras solicitudes
-  };
+  }, []);
 
   // Verificar si la URL de redirección contiene el 'authorization code' al cargar el componente
   useEffect(() => {
@@ -65,7 +65,7 @@ const OAuth2Component = () => {
     if (authorizationCode && returnedState === savedState) {
       exchangeCodeForToken(authorizationCode); // Si es válido, intercambiar el código por el access token
     }
-  }, []);
+  }, [exchangeCodeForToken]); // `exchangeCodeForToken` es una dependencia memorizada
 
   // Ejemplo de una función para hacer una solicitud a un recurso protegido usando el access token
   const fetchProtectedResource = async () => {
