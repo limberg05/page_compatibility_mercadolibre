@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 
 // Generar un 'state' aleatorio para evitar ataques CSRF
 const generateState = () => {
@@ -30,40 +30,46 @@ const OAuth2Component = () => {
   };
 
   // Función para intercambiar el 'authorization code' por el 'access token' (memorizada con useCallback)
-  const exchangeCodeForToken = useCallback(async (authorizationCode) => {
-    try {
-      // Realizamos una solicitud POST a la API de Mercado Libre para obtener el access token
-      const response = await fetch('https://api.mercadolibre.com/oauth/token', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          Accept: 'application/json',
-        },
-        body: new URLSearchParams({
-          grant_type: 'authorization_code',
-          client_id: clientId, // Asegúrate de que sea correcto
-          client_secret: clientSecret, // Asegúrate de que sea correcto
-          code: authorizationCode, // El código de autorización que obtuviste
-          redirect_uri: redirectUri, // Debe coincidir con la URI registrada
-        }),
-      });
+  const exchangeCodeForToken = useCallback(
+    async (authorizationCode) => {
+      try {
+        // Realizamos una solicitud POST a la API de Mercado Libre para obtener el access token
+        const response = await fetch(
+          'https://api.mercadolibre.com/oauth/token',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+              Accept: 'application/json',
+            },
+            body: new URLSearchParams({
+              grant_type: 'authorization_code',
+              client_id: clientId, // Asegúrate de que sea correcto
+              client_secret: clientSecret, // Asegúrate de que sea correcto
+              code: authorizationCode, // El código de autorización que obtuviste
+              redirect_uri: redirectUri, // Debe coincidir con la URI registrada
+            }),
+          }
+        );
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(`Error ${response.status}: ${errorData.message}`);
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(`Error ${response.status}: ${errorData.message}`);
+        }
+
+        const data = await response.json();
+        console.log('Access Token:', data.access_token); // Imprimir el token en la consola
+        setAccessToken(data.access_token); // Guardar el access token en el estado de React
+        localStorage.setItem('accessToken', data.access_token); // Almacenarlo en localStorage para futuras solicitudes
+      } catch (error) {
+        console.error(
+          'Error al intercambiar el authorization code por el access token:',
+          error.message
+        );
       }
-
-      const data = await response.json();
-      console.log('Access Token:', data.access_token); // Imprimir el token en la consola
-      setAccessToken(data.access_token); // Guardar el access token en el estado de React
-      localStorage.setItem('accessToken', data.access_token); // Almacenarlo en localStorage para futuras solicitudes
-    } catch (error) {
-      console.error(
-        'Error al intercambiar el authorization code por el access token:',
-        error.message
-      );
-    }
-  }, []); // Usamos un array vacío como dependencia para que la función solo se cree una vez.
+    },
+    [clientId, clientSecret, redirectUri]
+  ); // Añadir las dependencias
 
   // Verificar si la URL de redirección contiene el 'authorization code' al cargar el componente
   useEffect(() => {
