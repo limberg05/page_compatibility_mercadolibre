@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 
 // Generar un 'state' aleatorio para evitar ataques CSRF
 const generateState = () => {
@@ -83,6 +84,7 @@ const OAuth2Component = () => {
       exchangeCodeForToken(authorizationCode); // Si es válido, intercambiar el código por el access token
     }
   }, [exchangeCodeForToken]); // `exchangeCodeForToken` es ahora una dependencia memorizada con `useCallback`
+  }, [exchangeCodeForToken]); // `exchangeCodeForToken` es ahora una dependencia memorizada con `useCallback`
 
   return (
     <div>
@@ -102,7 +104,23 @@ const OAuth2Component = () => {
       )}
 
       {/* Mostrar el access token cuando está disponible */}
+        <div>
+          <button onClick={authorize}>Authorize with Mercado Libre</button>
+          <p>
+            {accessToken
+              ? 'Authorization successful!'
+              : 'Waiting for authorization...'}
+          </p>
+          {/* Mensaje si la validación es exitosa */}
+        </div>
+      )}
+
+      {/* Mostrar el access token cuando está disponible */}
       {accessToken && (
+        <div>
+          <h2>Your Access Token:</h2>
+          <p>{accessToken}</p> {/* Muestra el access token en la página */}
+        </div>
         <div>
           <h2>Your Access Token:</h2>
           <p>{accessToken}</p> {/* Muestra el access token en la página */}
