@@ -42,7 +42,7 @@ const OAuth2Component = () => {
     if (authorizationCode && returnedState === savedState) {
       exchangeCodeForToken(authorizationCode); // Si es válido, intercambiar el código por el access token
     }
-  }, [exchangeCodeForToken]); // `exchangeCodeForToken` es ahora una dependencia memorizada con `useCallback`
+  }, [exchangeCodeForToken]); // Aquí agregamos `exchangeCodeForToken` como dependencia
 
   return (
     <div>
@@ -52,12 +52,7 @@ const OAuth2Component = () => {
       {!accessToken && (
         <div>
           <button onClick={authorize}>Authorize with Mercado Libre</button>
-          <p>
-            {accessToken
-              ? 'Authorization successful!'
-              : 'Waiting for authorization...'}
-          </p>
-          {/* Mensaje si la validación es exitosa */}
+          <p>{'Waiting for authorization...'}</p>
         </div>
       )}
 
