@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 
 // Generar un 'state' aleatorio para evitar ataques CSRF
 const generateState = () => {
@@ -8,14 +8,14 @@ const generateState = () => {
   );
 };
 
-// Variables de configuración fuera del componente para evitar recrearlas en cada renderización
-const clientId = process.env.REACT_APP_CLIENT_ID; // Reemplaza con tu Client ID
-const clientSecret = process.env.REACT_APP_CLIENT_SECRET; // Reemplaza con tu Client Secret
-const redirectUri = process.env.REACT_APP_REDIRECT_URI; // La URI que registraste en tu app de Mercado Libre
-
 const OAuth2Component = () => {
   // Definir un estado para almacenar el 'access token'
   const [accessToken, setAccessToken] = useState(null);
+
+  // Variables de configuración para la autenticación en Mercado Libre
+  const clientId = process.env.REACT_APP_CLIENT_ID; // Reemplaza con tu Client ID
+  const clientSecret = process.env.REACT_APP_CLIENT_SECRET; // Reemplaza con tu Client Secret
+  const redirectUri = process.env.REACT_APP_REDIRECT_URI; // La URI que registraste en tu app de Mercado Libre
 
   // Función para redirigir al usuario a la página de autenticación de Mercado Libre
   const authorize = () => {
