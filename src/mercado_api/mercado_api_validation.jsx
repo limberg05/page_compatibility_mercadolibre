@@ -43,13 +43,15 @@ const OAuth2Component = () => {
 
         const data = await response.json();
         setAccessToken(data.access_token);
+        localStorage.setItem('accessToken', data.access_token); // Guardar en localStorage
         console.log('Access Token:', data.access_token);
       } catch (error) {
         console.error('Error al intercambiar el authorization code:', error);
       }
     },
     [clientId, clientSecret, redirectUri]
-  ); // Añadimos las dependencias necesarias.
+  );
+  // Añadimos las dependencias necesarias.
 
   // Verificar si la URL de redirección contiene el 'authorization code'
   useEffect(() => {
