@@ -43,13 +43,15 @@ const OAuth2Component = () => {
 
         const data = await response.json();
         setAccessToken(data.access_token);
+        localStorage.setItem('accessToken', data.access_token); // Guardar en localStorage
         console.log('Access Token:', data.access_token);
       } catch (error) {
         console.error('Error al intercambiar el authorization code:', error);
       }
     },
     [clientId, clientSecret, redirectUri]
-  ); // Añadimos las dependencias necesarias.
+  );
+  // Añadimos las dependencias necesarias.
 
   // Verificar si la URL de redirección contiene el 'authorization code'
   useEffect(() => {
@@ -66,6 +68,7 @@ const OAuth2Component = () => {
   // Función para iniciar el proceso de autorización
   const authorize = () => {
     const state = generateState();
+    const state = generateState();
     const authUrl = `https://auth.mercadolibre.com.mx/authorization?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&state=${state}`;
     sessionStorage.setItem('oauthState', state);
     window.location.href = authUrl;
@@ -75,13 +78,16 @@ const OAuth2Component = () => {
     <div>
       <h1>OAuth 2.0 Authentication</h1>
       {!accessToken ? (
+      {!accessToken ? (
         <div>
           <button onClick={authorize}>Authorize with Mercado Libre</button>
           <p>{'Waiting for authorization...'}</p>
         </div>
       ) : (
+      ) : (
         <div>
           <h2>Your Access Token:</h2>
+          <p>{accessToken}</p>
           <p>{accessToken}</p>
         </div>
       )}
