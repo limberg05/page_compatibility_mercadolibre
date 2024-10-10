@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import React, { useEffect, useState, useCallback } from 'react';
 
 // Generar un 'state' aleatorio para evitar ataques CSRF
 const generateState = () => {
@@ -30,7 +29,7 @@ const OAuth2Component = () => {
     window.location.href = authUrl;
   };
 
-  // Función para intercambiar el 'authorization code' por el 'access token' (memorizada con useCallback)
+  // Función para intercambiar el 'authorization code' por el 'access token'
   const exchangeCodeForToken = useCallback(
     async (authorizationCode) => {
       try {
@@ -70,7 +69,7 @@ const OAuth2Component = () => {
       }
     },
     [clientId, clientSecret, redirectUri]
-  ); // Añadir las dependencias
+  );
 
   // Verificar si la URL de redirección contiene el 'authorization code' al cargar el componente
   useEffect(() => {
@@ -83,8 +82,7 @@ const OAuth2Component = () => {
     if (authorizationCode && returnedState === savedState) {
       exchangeCodeForToken(authorizationCode); // Si es válido, intercambiar el código por el access token
     }
-  }, [exchangeCodeForToken]); // `exchangeCodeForToken` es ahora una dependencia memorizada con `useCallback`
-  }, [exchangeCodeForToken]); // `exchangeCodeForToken` es ahora una dependencia memorizada con `useCallback`
+  }, [exchangeCodeForToken]); // Aquí agregamos `exchangeCodeForToken` como dependencia
 
   return (
     <div>
@@ -94,33 +92,12 @@ const OAuth2Component = () => {
       {!accessToken && (
         <div>
           <button onClick={authorize}>Authorize with Mercado Libre</button>
-          <p>
-            {accessToken
-              ? 'Authorization successful!'
-              : 'Waiting for authorization...'}
-          </p>
-          {/* Mensaje si la validación es exitosa */}
-        </div>
-      )}
-
-      {/* Mostrar el access token cuando está disponible */}
-        <div>
-          <button onClick={authorize}>Authorize with Mercado Libre</button>
-          <p>
-            {accessToken
-              ? 'Authorization successful!'
-              : 'Waiting for authorization...'}
-          </p>
-          {/* Mensaje si la validación es exitosa */}
+          <p>{'Waiting for authorization...'}</p>
         </div>
       )}
 
       {/* Mostrar el access token cuando está disponible */}
       {accessToken && (
-        <div>
-          <h2>Your Access Token:</h2>
-          <p>{accessToken}</p> {/* Muestra el access token en la página */}
-        </div>
         <div>
           <h2>Your Access Token:</h2>
           <p>{accessToken}</p> {/* Muestra el access token en la página */}
