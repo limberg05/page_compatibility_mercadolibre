@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import crypto from 'crypto'; // Necesario para generar el code_challenge con SHA-256
+import crypto from 'crypto-browserify';
 
 // Generar un 'state' aleatorio para evitar ataques CSRF
 const generateState = () => {
