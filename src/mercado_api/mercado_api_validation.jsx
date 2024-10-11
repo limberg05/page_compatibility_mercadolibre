@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
+import crypto from 'crypto'; // Necesario para generar el code_challenge con SHA-256
 
 // Generar un 'state' aleatorio para evitar ataques CSRF
 const generateState = () => {
@@ -6,6 +7,26 @@ const generateState = () => {
     Math.random().toString(36).substring(2, 15) +
     Math.random().toString(36).substring(2, 15)
   );
+};
+
+// Generar un 'code_verifier' aleatorio
+const generateCodeVerifier = () => {
+  return (
+    Math.random().toString(36).substring(2, 15) +
+    Math.random().toString(36).substring(2, 15) +
+    Math.random().toString(36).substring(2, 15)
+  );
+};
+
+// Crear un 'code_challenge' a partir del 'code_verifier' usando SHA-256 y base64 URL encoding
+const generateCodeChallenge = (codeVerifier) => {
+  return crypto
+    .createHash('sha256')
+    .update(codeVerifier)
+    .digest('base64')
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/, ''); // Reemplaza caracteres para ser URL-safe
 };
 
 const OAuth2Component = () => {
@@ -17,7 +38,7 @@ const OAuth2Component = () => {
 
   // Función para intercambiar el 'authorization code' por el 'access token'
   const exchangeCodeForToken = useCallback(
-    async (authorizationCode) => {
+    async (authorizationCode, codeVerifier) => {
       try {
         const response = await fetch(
           'https://api.mercadolibre.com/oauth/token',
@@ -33,6 +54,7 @@ const OAuth2Component = () => {
               client_secret: clientSecret,
               code: authorizationCode,
               redirect_uri: redirectUri,
+              code_verifier: codeVerifier, // Añadir el code_verifier para la validación
             }),
           }
         );
@@ -60,17 +82,23 @@ const OAuth2Component = () => {
     const authorizationCode = urlParams.get('code');
     const returnedState = urlParams.get('state');
     const savedState = sessionStorage.getItem('oauthState');
+    const codeVerifier = sessionStorage.getItem('codeVerifier'); // Recuperar el code_verifier guardado
 
-    if (authorizationCode && returnedState === savedState) {
-      exchangeCodeForToken(authorizationCode); // Intercambiar el código por el access token
+    if (authorizationCode && returnedState === savedState && codeVerifier) {
+      exchangeCodeForToken(authorizationCode, codeVerifier); // Intercambiar el código por el access token
     }
   }, [exchangeCodeForToken]);
 
   // Función para iniciar el proceso de autorización
   const authorize = () => {
     const state = generateState();
-    const authUrl = `https://auth.mercadolibre.com.mx/authorization?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&state=${state}&scope=read offline_access`;
+    const codeVerifier = generateCodeVerifier();
+    const codeChallenge = generateCodeChallenge(codeVerifier);
+
     sessionStorage.setItem('oauthState', state);
+    sessionStorage.setItem('codeVerifier', codeVerifier); // Guardar el code_verifier para su uso posterior
+
+    const authUrl = `https://auth.mercadolibre.com.mx/authorization?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&state=${state}&scope=read offline_access&code_challenge=${codeChallenge}&code_challenge_method=S256`;
     window.location.href = authUrl;
   };
 
