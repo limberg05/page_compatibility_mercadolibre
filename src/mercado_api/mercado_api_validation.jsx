@@ -67,9 +67,7 @@ const OAuth2Component = () => {
   // Función para iniciar el proceso de autorización
   const authorize = () => {
     const state = generateState();
-    solucion_bugs_1;
     const authUrl = `https://auth.mercadolibre.com.mx/authorization?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&state=${state}&scope=read offline_access`;
-    master;
     sessionStorage.setItem('oauthState', state);
     window.location.href = authUrl;
   };
