@@ -51,7 +51,6 @@ const OAuth2Component = () => {
     },
     [clientId, clientSecret, redirectUri]
   );
-  // Añadimos las dependencias necesarias.
 
   // Verificar si la URL de redirección contiene el 'authorization code'
   useEffect(() => {
@@ -63,12 +62,12 @@ const OAuth2Component = () => {
     if (authorizationCode && returnedState === savedState) {
       exchangeCodeForToken(authorizationCode); // Intercambiar el código por el access token
     }
-  }, [exchangeCodeForToken]); // `exchangeCodeForToken` ahora es una dependencia válida
+  }, [exchangeCodeForToken]);
 
   // Función para iniciar el proceso de autorización
   const authorize = () => {
     const state = generateState();
-    const authUrl = `https://auth.mercadolibre.com.mx/authorization?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&state=${state}`;
+    const authUrl = `https://auth.mercadolibre.com.mx/authorization?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&state=${state}&scope=read offline_access`;
     sessionStorage.setItem('oauthState', state);
     window.location.href = authUrl;
   };
