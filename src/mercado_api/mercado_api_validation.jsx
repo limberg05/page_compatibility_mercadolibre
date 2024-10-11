@@ -37,13 +37,15 @@ const OAuth2Component = () => {
           }
         );
 
+        const data = await response.json();
+
         if (!response.ok) {
+          console.log('Error Response:', data); // Log the full error response for debugging
           throw new Error(`Error al obtener el token: ${response.statusText}`);
         }
 
-        const data = await response.json();
         setAccessToken(data.access_token);
-        localStorage.setItem('accessToken', data.access_token); // Guardar en localStorage
+        localStorage.setItem('accessToken', data.access_token);
         console.log('Access Token:', data.access_token);
       } catch (error) {
         console.error('Error al intercambiar el authorization code:', error);
