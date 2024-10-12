@@ -6,31 +6,49 @@ import {
   TableRow,
   TableCell,
 } from '@nextui-org/table';
+import { Image } from '@nextui-org/react';
+import { Star } from 'lucide-react';
 
 function MainTable() {
   return (
     <div>
       <Table>
         <TableHeader>
-          <TableColumn>Modelo</TableColumn>
-          <TableColumn>caracteristica1</TableColumn>
-          <TableColumn>caracteristica2</TableColumn>
-          <TableColumn>caracteristica3</TableColumn>
-          <TableColumn>caracteristica4</TableColumn>
-          <TableColumn>alta o baja</TableColumn>
-          <TableColumn>Precio</TableColumn>
-          <TableColumn>estrellas</TableColumn>
+          <TableColumn className='text-1xl text-center'>Modelo </TableColumn>
+          <TableColumn className='text-1xl text-center'>No. de núcleos</TableColumn>
+          <TableColumn className='text-1xl text-center'>Rendimiento de Clock</TableColumn>
+          <TableColumn className='text-1xl text-center'>Rendimiento de Boost Clock</TableColumn>
+          <TableColumn className='text-1xl text-center'>Microarquitectura</TableColumn>
+          <TableColumn className='text-1xl text-center'>Potencia de Diseño Térmico</TableColumn>
+          <TableColumn className='text-1xl text-center'>Rating</TableColumn>
+          <TableColumn className='text-1xl text-center'>Precio</TableColumn>
         </TableHeader>
         <TableBody>
           <TableRow key={1}>
-            <TableCell>hola</TableCell>
-            <TableCell>2</TableCell>
-            <TableCell>3</TableCell>
-            <TableCell>4</TableCell>
-            <TableCell>5</TableCell>
-            <TableCell>6</TableCell>
-            <TableCell>7</TableCell>
-            <TableCell>8</TableCell>
+            <TableCell>
+              <Image 
+              alt='Ejemplo de Imagen'
+              src='procesador.jpg'
+              className='w-36 h-36 float-left'
+              />
+              <div className='float-right py-16 text-xl font-semibold'>
+              AMD Ryzen 5 3400G
+              </div>
+            </TableCell>
+            <TableCell className='text-xl text-center'>4</TableCell>
+            <TableCell className='text-xl text-center'>3.7 GHz</TableCell>
+            <TableCell className='text-xl text-center'>4.2 GHz</TableCell>
+            <TableCell className='text-xl text-center'>Zen+</TableCell>
+            <TableCell className='text-xl text-center'>65 W</TableCell>
+            <TableCell className='text-xl text-center'>
+              <div className="flex items-center justify-center">
+                {[...Array(5)].map((_, index) => (
+                  <Star key={index} className="w-5 h-5 text-yellow-400 fill-current" />
+                ))}
+                <span className="ml-2 text-gray-600">(65)</span>
+              </div>
+            </TableCell>
+            <TableCell className='text-xl text-center'>$97</TableCell>
           </TableRow>
         </TableBody>
       </Table>
