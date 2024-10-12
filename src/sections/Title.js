@@ -1,9 +1,9 @@
-function App() {
+function Title() {
   return (
     <div className="">
-      <p className="">hola queso</p>
+      <p className="">hola qo</p>
     </div>
   );
 }
 
-export default App;
+export default Title;
