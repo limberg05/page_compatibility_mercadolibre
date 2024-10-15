@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 
 const RandomItemsComponent = () => {
-  const [items, setItems] = useState([]);
-  const [error, setError] = useState(null);
+  const [items, setItems] = useState([]); // Estado para guardar los productos
+  const [error, setError] = useState(null); // Estado para errores
+  const [loading, setLoading] = useState(true); // Estado para mostrar indicador de carga
 
   // Función para obtener productos aleatorios desde la API de Mercado Libre
   const getRandomItems = async () => {
@@ -10,6 +11,7 @@ const RandomItemsComponent = () => {
 
     if (!accessToken) {
       setError('No access token found. Please authenticate first.');
+      setLoading(false); // Detener la carga si no hay token
       return;
     }
 
@@ -36,8 +38,11 @@ const RandomItemsComponent = () => {
 
       // Actualiza el estado con los productos obtenidos
       setItems(randomItems);
+      setError(null); // Si no hay error, limpiamos el mensaje de error
     } catch (err) {
       setError(`Error fetching products: ${err.message}`);
+    } finally {
+      setLoading(false); // Detenemos el indicador de carga una vez finalizada la petición
     }
   };
 
@@ -49,12 +54,14 @@ const RandomItemsComponent = () => {
     <div>
       <h1>Random Products</h1>
       {error && <p style={{ color: 'red' }}>{error}</p>}
-      <div>
-        {items.length === 0 ? (
-          <p>Loading products...</p>
-        ) : (
-          items.map((item) => (
-            <div key={item.id}>
+      {loading ? (
+        <p>Loading products...</p>
+      ) : items.length === 0 ? (
+        <p>No products found.</p>
+      ) : (
+        <div>
+          {items.map((item) => (
+            <div key={item.id} style={{ marginBottom: '20px' }}>
               <h2>{item.title}</h2>
               <img src={item.thumbnail} alt={item.title} />
               <p>Precio: ${item.price}</p>
@@ -66,9 +73,9 @@ const RandomItemsComponent = () => {
                 Ver producto
               </a>
             </div>
-          ))
-        )}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
