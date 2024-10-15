@@ -11,7 +11,6 @@ const RandomItemsComponent = () => {
     query: 'procesadores',
     priceMin: '',
     priceMax: '',
-    brand: ['AMD', 'Intel'],
     sort: 'relevance', // Parámetro de orden: relevance, price_asc, price_desc
   });
 
@@ -26,12 +25,17 @@ const RandomItemsComponent = () => {
 
   // Función para construir la URL con los filtros, envuelta en useCallback
   const buildUrl = useCallback(() => {
-    const { category, query, priceMin, priceMax, brand, sort } = searchParams;
+    const { category, query, priceMin, priceMax, sort } = searchParams;
     let url = `https://api.mercadolibre.com/sites/MLM/search?category=${category}&q=${query}`;
 
-    if (priceMin) url += `&price=${priceMin}-${priceMax || ''}`;
-    if (brand) url += `&brand=${brand}`;
-    if (sort) url += `&sort=${sort}`;
+    // Si hay precio mínimo y máximo, añadirlos al filtro
+    if (priceMin || priceMax) {
+      url += `&price=${priceMin}-${priceMax || ''}`; // Si no hay precio máximo, dejar sin valor
+    }
+
+    if (sort) {
+      url += `&sort=${sort}`;
+    }
 
     return url;
   }, [searchParams]); // searchParams es la dependencia aquí
@@ -60,6 +64,9 @@ const RandomItemsComponent = () => {
       if (!response.ok) {
         throw new Error(data.message || 'Error fetching products');
       }
+
+      // Mostrar en la consola los datos obtenidos
+      console.log('Datos recibidos de Mercado Libre:', data);
 
       // Actualiza el estado con los productos obtenidos
       setItems(data.results);
@@ -95,17 +102,6 @@ const RandomItemsComponent = () => {
             value={searchParams.query}
             onChange={handleInputChange}
             placeholder="procesadores"
-          />
-        </div>
-
-        <div>
-          <label>Marca: </label>
-          <input
-            type="text"
-            name="brand"
-            value={searchParams.brand}
-            onChange={handleInputChange}
-            placeholder="Ej: Intel, AMD"
           />
         </div>
 
