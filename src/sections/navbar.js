@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-comment-textnodes */
 import React from 'react';
 
 const Navbar = () => {
@@ -13,7 +14,6 @@ const Navbar = () => {
         <li className="hover:text-gray-400 cursor-pointer">Componentes</li>
         <li className="hover:text-gray-400 cursor-pointer">Categorías</li>
         <li className="hover:text-gray-400 cursor-pointer">Pipomarico</li>
- 
       </ul>
 
       {/* Right Section:Icons */}
