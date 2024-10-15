@@ -17,7 +17,7 @@ const RandomItemsComponent = () => {
 
     try {
       const response = await fetch(
-        'https://api.mercadolibre.com/sites/MLM/search?q=producto',
+        'https://api.mercadolibre.com/sites/MLM/search?q=cpu', // Cambio para buscar CPUs
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -52,7 +52,7 @@ const RandomItemsComponent = () => {
 
   return (
     <div>
-      <h1>Random Products</h1>
+      <h1>Random CPU Products</h1> {/* Cambio el título a CPU Products */}
       {error && <p style={{ color: 'red' }}>{error}</p>}
       {loading ? (
         <p>Loading products...</p>
