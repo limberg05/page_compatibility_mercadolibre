@@ -5,7 +5,7 @@ const RandomItemsComponent = () => {
   const [error, setError] = useState(null); // Estado para errores
   const [loading, setLoading] = useState(true); // Estado para mostrar indicador de carga
 
-  // Función para obtener productos aleatorios desde la API de Mercado Libre
+  // Función para obtener productos desde la API de Mercado Libre
   const getRandomItems = async () => {
     const accessToken = localStorage.getItem('accessToken'); // Obtén el accessToken del localStorage
 
@@ -17,7 +17,7 @@ const RandomItemsComponent = () => {
 
     try {
       const response = await fetch(
-        'https://api.mercadolibre.com/sites/MLM/search?q=cpu', // Cambio para buscar CPUs
+        'https://api.mercadolibre.com/sites/MLM/search?category=MLM1648&q=procesadores', // Cambio para buscar en la categoría "Procesadores"
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
