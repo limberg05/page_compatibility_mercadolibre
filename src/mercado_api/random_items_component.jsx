@@ -1,10 +1,13 @@
-import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { SearchForm, buildUrl, fetchItemsFromAPI } from './';
 
 const RandomItemsComponent = () => {
   const [items, setItems] = useState([]); // Estado para guardar los productos
   const [error, setError] = useState(null); // Estado para errores
   const [loading, setLoading] = useState(false); // Estado para mostrar indicador de carga
+  const [banList, setBanList] = useState(
+    () => JSON.parse(localStorage.getItem('banList')) || []
+  ); // Palabras baneadas desde localStorage
 
   // Estado para los filtros de búsqueda
   const [searchParams, setSearchParams] = useState({
@@ -15,39 +18,38 @@ const RandomItemsComponent = () => {
     sort: 'relevance',
   });
 
-  // Palabras clave que consideraremos para filtrar los productos (incluyendo variantes)
-  const keywords = useMemo(
-    () => [
-      'procesador',
-      'cpu',
-      'intel',
-      'core',
-      'i3',
-      'i5',
-      'i7',
-      'i9',
-      'xeon',
-      'pentium',
-      'celeron',
-      'amd',
-      'ryzen',
-      'threadripper',
-      'athlon',
-      'epyc',
-    ],
-    []
-  ); // `useMemo` asegura que este array solo se cree una vez
+  // Función para guardar las listas en localStorage
+  const saveToLocalStorage = (list, key) => {
+    localStorage.setItem(key, JSON.stringify(list));
+  };
 
-  // Función para filtrar productos, envuelta en useCallback
+  // Función para marcar un producto como no deseado y extraer las palabras clave a banear
+  const markAsUndesired = (product) => {
+    const title = product.title.toLowerCase();
+    const matchedKeywords = title.split(' '); // Extraemos todas las palabras del título
+
+    const newBanList = [...banList, ...matchedKeywords];
+    setBanList(newBanList);
+    saveToLocalStorage(newBanList, 'banList');
+
+    // Salida en consola para ver la lista de palabras baneadas actualizadas
+    console.log('Palabras baneadas guardadas:', newBanList);
+  };
+
+  // Filtrar los productos para excluir aquellos que tengan palabras de la ban list
   const filterProducts = useCallback(
     (products) => {
       return products.filter((product) => {
-        const title = product.title.toLowerCase(); // Convertimos a minúsculas para evitar problemas con las mayúsculas
-        return keywords.some((keyword) => title.includes(keyword)); // Filtramos si alguna palabra clave está en el título
+        const title = product.title.toLowerCase();
+        // Excluir productos que contengan palabras de la banList
+        if (banList.some((bannedWord) => title.includes(bannedWord))) {
+          return false;
+        }
+        return true; // Si no hay palabras baneadas, mostrar el producto
       });
     },
-    [keywords]
-  ); // Incluimos `keywords` como dependencia
+    [banList]
+  );
 
   // Función para obtener productos desde la API de Mercado Libre
   const getRandomItems = useCallback(async () => {
@@ -73,7 +75,7 @@ const RandomItemsComponent = () => {
     } finally {
       setLoading(false);
     }
-  }, [searchParams, filterProducts]); // Ahora `filterProducts` es una dependencia
+  }, [searchParams, filterProducts]);
 
   // Manejar el envío del formulario
   const handleSubmit = (e) => {
@@ -114,6 +116,9 @@ const RandomItemsComponent = () => {
               >
                 Ver producto
               </a>
+              <button onClick={() => markAsUndesired(item)}>
+                Marcar como no deseado
+              </button>
             </div>
           ))}
         </div>
